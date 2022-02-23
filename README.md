@@ -60,3 +60,14 @@ Terraform v0.13.0
 ## Special Thanks
 
 [CuriosityChina](https://github.com/CuriosityChina)
+
+---
+---
+
+## dcm change log
+
+1. 调整安全组规格类型的校验，加了一些
+```
+# 更改 resource_qingcloud_security_group_rule.go第37行为：
+ValidateFunc: withinArrayString("tcp", "udp", "icmp", "gre", "esp", "ah", "ipip", "vrrp", "ipv6", "ipv6-icmp", "ipencap", "all"),
+```

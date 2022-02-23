@@ -34,7 +34,7 @@ func resourceQingcloudSecurityGroupRule() *schema.Resource {
 			resourceSecurityGroupRuleProtocol: {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: withinArrayString("tcp", "udp", "icmp", "gre", "esp", "ah", "ipip"),
+				ValidateFunc: withinArrayString("tcp", "udp", "icmp", "gre", "esp", "ah", "ipip", "vrrp", "ipv6", "ipv6-icmp", "ipencap", "all"),
 			},
 			resourceSecurityGroupRulePriority: {
 				Type:         schema.TypeInt,
