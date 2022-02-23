@@ -20,6 +20,8 @@ const (
 	resourceInstanceEipID           = "eip_id"
 	resourceInstanceVolumeIDs       = "volume_ids"
 	resourceInstancePublicIP        = "public_ip"
+	// 新加的字段： vxnet的类型（0-qc云管系统网络段，1-用于vrouter的vpc的基础网络段，2-普通基础网络段）
+	//resourceInstanceVxNetType       = "vxnet_type"
 	resourceInstanceUserData        = "userdata"
 	resourceInstanceLoginPassword   = "login_passwd"
 	resourceInstanceOsDiskSize      = "os_disk_size"
@@ -115,6 +117,13 @@ func resourceQingcloudInstance() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			// 新加的字段： vxnet的类型（0-qc云管系统网络段，1-用于vrouter的vpc的基础网络段，2-普通基础网络段）
+			//resourceInstanceVxNetType: {
+			//	Type:     schema.TypeString,
+			//	ValidateFunc: withinArrayString("vxnet_type", "0", "1", "2"),
+			//	Optional: true,
+			//	Default: nil,
+			//},
 			resourceInstanceUserData: {
 				Type:     schema.TypeString,
 				Optional: true,

@@ -80,6 +80,7 @@ func instanceUpdateChangeManagedVxNet(d *schema.ResourceData, meta interface{}) 
 	}
 	if newV.(string) != "" {
 		selfManaged, err := isVxnetSelfManaged(newV.(string), vxnetClt)
+		//selfManaged, err := isVxnetSelfManaged(resourceInstanceVxNetType, newV.(string), vxnetClt)
 		if err != nil {
 			return err
 		}

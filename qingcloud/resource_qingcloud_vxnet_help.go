@@ -2,9 +2,9 @@ package qingcloud
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform/helper/schema"
 	qc "github.com/yunify/qingcloud-sdk-go/service"
+	"strings"
 )
 
 func modifyVxnetAttributes(d *schema.ResourceData, meta interface{}) error {
@@ -78,10 +78,26 @@ func vxnetLeaverRouter(d *schema.ResourceData, meta interface{}) error {
 }
 
 func isVxnetSelfManaged(vxnetId string, clt *qc.VxNetService) (bool, error) {
+//func isVxnetSelfManaged(vxNetType string, vxnetId string, clt *qc.VxNetService) (bool, error) {
 	if vxnetId == BasicNetworkID {
 		return false, nil
 	}
 	input := new(qc.DescribeVxNetsInput)
+
+	// 基础网络
+	if strings.HasPrefix(vxnetId,"vxnet") {
+		vxNetType := 2
+		input.VxNetType = &vxNetType
+	}
+
+	//if !strings.EqualFold("vxnet_type", vxNetType) {
+	//	vxtp, parse_err := strconv.Atoi(vxNetType)
+	//	if parse_err != nil {
+	//		return false, fmt.Errorf("parse '" + vxNetType + "' to int Error, Please check the arg")
+	//	}
+	//	input.VxNetType = &vxtp
+	//}
+
 	input.VxNets = []*string{qc.String(vxnetId)}
 	output, err := clt.DescribeVxNets(input)
 	if err != nil {

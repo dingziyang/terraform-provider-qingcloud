@@ -64,9 +64,66 @@ Terraform v0.13.0
 ---
 ---
 
-## dcm change log
+## dcm readme
 
-1. 调整安全组规格类型的校验，加了一些
+#### 打包
+- 修改Makefile第一行
+- 执行命令：```make```
+
+#### how to use test
+> 以下更改仅用于本地测试用，打包时请还原
+1. 在test方法run的environment里加上```TF_ACC=1```表示真跑test
+2. 然后修改provider.go文件的最后的init方法，填写正确的ak/sk之类的信息， 修改providerConfigure方法，直接赋值相关信息
+```
+# provider.go的func providerConfigure 中 修改一段
+
+var accesskey string  = "我的ak"
+secretkey := "我的sk"
+zone := "LFRZ1"
+endpoint := "https://api.enncloud.cn/iaas/"
+
+config := Config{
+    ID:       accesskey,
+    Secret:   secretkey,
+    Zone:     zone,
+    EndPoint: endpoint,
+}
+```
+3. 在import_qingcloud_instance_test.go里面
+```
+PreCheck:     func() { 
+    //testAccPreCheck(t)  // 注释掉provider校验
+},
+
+//Providers:    testAccProviders, // 注释掉本行， 跳过ak，sk校验(会从os环境变量中取)，改为下面这样
+Providers: map[string]terraform.ResourceProvider{
+    "qingcloud": Provider().(*schema.Provider),
+},
+
+//Config: fmt.Sprintf(testAccInstanceConfig, testTag),
+Config: fmt.Sprintf(testDcmInstanceConfig, testTag), // 其中testDcmInstanceConfig为terraform脚本内容
+```
+4. 在resource_qingcloud_instance_test.go里加入：
+```
+const testDcmInstanceConfig = `
+resource "qingcloud_tag" "test"{
+    name="%v"
+}
+resource "qingcloud_instance" "dcm001" {
+    name = "dcm-tarraform-sourcecode1"
+    image_id = "img-jrmtompa"
+    cpu = 1
+    memory = 1024
+    os_disk_size = "50"
+    login_passwd = "1qazXSW@"
+    managed_vxnet_id = "vxnet-0"
+    tag_ids = ["${qingcloud_tag.test.id}"]
+}
+`
+```
+
+#### code change log
+1. 调整安全组规格类型的校验，加了一些安全组规则类型
 ```
 # 更改 resource_qingcloud_security_group_rule.go第37行为：
 ValidateFunc: withinArrayString("tcp", "udp", "icmp", "gre", "esp", "ah", "ipip", "vrrp", "ipv6", "ipv6-icmp", "ipencap", "all"),
